@@ -1,0 +1,48 @@
+#!/bin/bash
+#
+# Copyright (c) 2020 Francois Swanepoel
+# Author: Francois Swanepoel <fswanepoel@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+
+PREREQ=""
+prereqs()
+{
+     echo "$PREREQ"
+}
+
+case $1 in
+prereqs)
+     prereqs
+     exit 0
+     ;;
+esac
+
+. /usr/share/initramfs-tools/hook-functions
+
+die() {
+    code="$1"
+    msg="$2"
+    echo "    (ERROR): $msg" >&2
+    exit $1
+}
+
+# Install certs
+mkdir -p ${DESTDIR}/etc/ssl/certs || true
+cp -pnL /etc/ssl/certs/ca-certificates.crt ${DESTDIR}/etc/ssl/certs/ || die 1 "/etc/ssl/certs/ca-certificates.crt not found"
+cp -pnL /etc/ca-certificates.conf ${DESTDIR}/etc || die 1 "ca-certificates.conf not found"
+
+exit 0
